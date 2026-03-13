@@ -1,0 +1,23 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+catboost_info/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Данные и модели не храним в Git: данные скачиваются скриптом,
+# модель воспроизводится командой обучения.
+data/
+artifacts/
+*.joblib
+*.cbm
+*.pkl
+
+# Секреты
+.env
