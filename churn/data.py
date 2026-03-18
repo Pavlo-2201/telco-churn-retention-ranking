@@ -117,3 +117,60 @@ def target_distribution(df: pd.DataFrame) -> dict[str, dict[str, float]]:
         label: {"count": int(counts[label]), "share": round(float(shares[label]), 4)}
         for label in sorted(counts.index)
     }
+
+
+# Признаки модели. customerID не является признаком: это уникальный
+# идентификатор без смысла для поведения клиента, модель могла бы только
+# запомнить его.
+NUMERIC_FEATURES = ["tenure", "MonthlyCharges", "TotalCharges"]
+BINARY_NUMERIC_FEATURES = ["SeniorCitizen"]
+CATEGORICAL_FEATURES = [
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod",
+]
+FEATURES = NUMERIC_FEATURES + BINARY_NUMERIC_FEATURES + CATEGORICAL_FEATURES
+
+
+def parse_total_charges(values: pd.Series) -> pd.Series:
+    """Переводит TotalCharges в число; пустые строки становятся NaN."""
+    stripped = values.astype("string").str.strip()
+    return pd.to_numeric(stripped.mask(stripped == ""), errors="coerce").astype("float64")
+
+
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Построчная очистка без статистик по выборке, поэтому утечки не создаёт.
+
+    - TotalCharges -> float. Пустое значение встречается только у клиентов
+      с tenure == 0 (подключились в последнем периоде, ещё ничего не оплатили),
+      поэтому для них ставится 0. Остальные пропуски, если появятся в новых
+      данных, заполняет импьютер внутри Pipeline.
+    - Churn -> 0/1, если столбец есть (на инференсе его нет).
+    """
+    out = df.copy()
+    total = parse_total_charges(out["TotalCharges"])
+    new_customer = out["tenure"].eq(0) & total.isna()
+    out["TotalCharges"] = total.mask(new_customer, 0.0)
+    if TARGET_COLUMN in out.columns:
+        out[TARGET_COLUMN] = out[TARGET_COLUMN].map({"No": 0, "Yes": 1}).astype("int64")
+    return out
+
+
+def load_dataset(path: Path = DEFAULT_DATA_PATH) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
+    """Возвращает признаки X (без customerID), цель y и идентификаторы."""
+    raw = load_raw(path)
+    validate_schema(raw)
+    df = clean_data(raw)
+    return df[FEATURES], df[TARGET_COLUMN], df[ID_COLUMN]
