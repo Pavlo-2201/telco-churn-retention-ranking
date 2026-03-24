@@ -1,0 +1,30 @@
+{
+  "n_rows": 7043,
+  "churn_rate": 0.2654,
+  "nan_in_raw": 0,
+  "total_charges_blank": 11,
+  "total_charges_blank_all_tenure_zero": true,
+  "total_charges_rule": "blank TotalCharges with tenure == 0 -> 0.0",
+  "corr_total_charges_tenure": 0.826,
+  "excluded_columns": [
+    "customerID"
+  ],
+  "churn_rate_spread_by_feature": {
+    "Contract": 0.399,
+    "InternetService": 0.345,
+    "OnlineSecurity": 0.344,
+    "TechSupport": 0.342,
+    "OnlineBackup": 0.325,
+    "DeviceProtection": 0.317,
+    "PaymentMethod": 0.3,
+    "StreamingMovies": 0.263,
+    "StreamingTV": 0.261,
+    "SeniorCitizen": 0.181,
+    "PaperlessBilling": 0.172,
+    "Dependents": 0.158,
+    "Partner": 0.133,
+    "MultipleLines": 0.037,
+    "PhoneService": 0.018,
+    "gender": 0.008
+  }
+}

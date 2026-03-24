@@ -21,3 +21,10 @@ python -m churn.download_data   # скачивание и проверка SHA-2
 python -m churn.check_data      # проверка схемы, распределение цели -> results/data_summary.json
 pytest -q
 ```
+
+EDA: `notebooks/01_eda.ipynb` (выполненный, с выводами). Графики сохраняются в `reports/figures/`,
+краткая сводка в `results/eda_summary.json`. Перезапуск без Jupyter-интерфейса:
+
+```bash
+python -c "import nbformat; from nbclient import NotebookClient; nb=nbformat.read('notebooks/01_eda.ipynb', 4); NotebookClient(nb, record_timing=False, resources={'metadata': {'path': 'notebooks'}}).execute(); nbformat.write(nb, 'notebooks/01_eda.ipynb')"
+```
