@@ -1,0 +1,73 @@
+{
+  "seed": 42,
+  "evaluated_on": "val",
+  "split_sizes": {
+    "train": {
+      "n": 4225,
+      "churn_rate": 0.2653
+    },
+    "val": {
+      "n": 1409,
+      "churn_rate": 0.2654
+    },
+    "test": {
+      "n": 1409,
+      "churn_rate": 0.2654
+    }
+  },
+  "models": {
+    "dummy": {
+      "params": {
+        "constant": null,
+        "random_state": null,
+        "strategy": "prior"
+      },
+      "val": {
+        "roc_auc": 0.5,
+        "pr_auc": 0.2654364797728886,
+        "threshold": 0.5,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "confusion_matrix": {
+          "tn": 1035,
+          "fp": 0,
+          "fn": 374,
+          "tp": 0
+        }
+      }
+    },
+    "logreg": {
+      "params": {
+        "C": 1.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 2000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 0.0001,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "val": {
+        "roc_auc": 0.8360523392492702,
+        "pr_auc": 0.6422870003265463,
+        "threshold": 0.5,
+        "f1": 0.5899705014749262,
+        "precision": 0.6578947368421053,
+        "recall": 0.5347593582887701,
+        "confusion_matrix": {
+          "tn": 931,
+          "fp": 104,
+          "fn": 174,
+          "tp": 200
+        }
+      }
+    }
+  }
+}
