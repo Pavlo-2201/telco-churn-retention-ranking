@@ -1,0 +1,214 @@
+{
+  "seed": 42,
+  "evaluated_on": "val",
+  "split_sizes": {
+    "train": {
+      "n": 4225,
+      "churn_rate": 0.2653
+    },
+    "val": {
+      "n": 1409,
+      "churn_rate": 0.2654
+    },
+    "test": {
+      "n": 1409,
+      "churn_rate": 0.2654
+    }
+  },
+  "models": {
+    "dummy": {
+      "params": {
+        "constant": null,
+        "random_state": null,
+        "strategy": "prior"
+      },
+      "val": {
+        "roc_auc": 0.5,
+        "pr_auc": 0.2654364797728886,
+        "threshold": 0.5,
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "confusion_matrix": {
+          "tn": 1035,
+          "fp": 0,
+          "fn": 374,
+          "tp": 0
+        }
+      }
+    },
+    "logreg": {
+      "params": {
+        "C": 1.0,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": 0.0,
+        "max_iter": 2000,
+        "n_jobs": null,
+        "penalty": "deprecated",
+        "random_state": 42,
+        "solver": "lbfgs",
+        "tol": 0.0001,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "val": {
+        "roc_auc": 0.8360523392492702,
+        "pr_auc": 0.6422870003265463,
+        "threshold": 0.5,
+        "f1": 0.5899705014749262,
+        "precision": 0.6578947368421053,
+        "recall": 0.5347593582887701,
+        "confusion_matrix": {
+          "tn": 931,
+          "fp": 104,
+          "fn": 174,
+          "tp": 200
+        }
+      }
+    },
+    "random_forest": {
+      "params": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": null,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 500,
+        "n_jobs": -1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "val": {
+        "roc_auc": 0.8346779818646827,
+        "pr_auc": 0.6384317778339876,
+        "threshold": 0.5,
+        "f1": 0.5335463258785943,
+        "precision": 0.6626984126984127,
+        "recall": 0.446524064171123,
+        "confusion_matrix": {
+          "tn": 950,
+          "fp": 85,
+          "fn": 207,
+          "tp": 167
+        }
+      }
+    },
+    "catboost": {
+      "params": {
+        "iterations": 500,
+        "learning_rate": 0.05,
+        "depth": 6,
+        "thread_count": 4,
+        "random_seed": 42,
+        "verbose": false,
+        "allow_writing_files": false,
+        "cat_features": [
+          "gender",
+          "Partner",
+          "Dependents",
+          "PhoneService",
+          "MultipleLines",
+          "InternetService",
+          "OnlineSecurity",
+          "OnlineBackup",
+          "DeviceProtection",
+          "TechSupport",
+          "StreamingTV",
+          "StreamingMovies",
+          "Contract",
+          "PaperlessBilling",
+          "PaymentMethod"
+        ]
+      },
+      "val": {
+        "roc_auc": 0.8328592833707923,
+        "pr_auc": 0.6401158938065555,
+        "threshold": 0.5,
+        "f1": 0.5590433482810164,
+        "precision": 0.6338983050847458,
+        "recall": 0.5,
+        "confusion_matrix": {
+          "tn": 927,
+          "fp": 108,
+          "fn": 187,
+          "tp": 187
+        }
+      }
+    },
+    "random_forest_onehot": {
+      "params": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "class_weight": null,
+        "criterion": "gini",
+        "max_depth": null,
+        "max_features": "sqrt",
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 5,
+        "min_samples_split": 2,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 500,
+        "n_jobs": -1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "val": {
+        "roc_auc": 0.834900152419334,
+        "pr_auc": 0.6300192267453115,
+        "threshold": 0.5,
+        "f1": 0.55,
+        "precision": 0.6616541353383458,
+        "recall": 0.47058823529411764,
+        "confusion_matrix": {
+          "tn": 945,
+          "fp": 90,
+          "fn": 198,
+          "tp": 176
+        }
+      }
+    },
+    "catboost_onehot": {
+      "params": {
+        "iterations": 500,
+        "learning_rate": 0.05,
+        "depth": 6,
+        "thread_count": 4,
+        "random_seed": 42,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "val": {
+        "roc_auc": 0.8272572270014725,
+        "pr_auc": 0.6321676950129745,
+        "threshold": 0.5,
+        "f1": 0.5363636363636364,
+        "precision": 0.6188811188811189,
+        "recall": 0.4732620320855615,
+        "confusion_matrix": {
+          "tn": 926,
+          "fp": 109,
+          "fn": 197,
+          "tp": 177
+        }
+      }
+    }
+  }
+}

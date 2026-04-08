@@ -19,7 +19,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m churn.download_data   # скачивание и проверка SHA-256
 python -m churn.check_data      # проверка схемы, распределение цели -> results/data_summary.json
-python -m churn.baselines       # разбиения, Dummy и LogisticRegression -> results/baselines.json
+python -m churn.compare_models --ablation   # все модели на validation -> results/val_comparison.json
 pytest -q
 ```
 
