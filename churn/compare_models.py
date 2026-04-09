@@ -6,12 +6,11 @@ from pathlib import Path
 
 from churn.data import DEFAULT_DATA_PATH, download_data, load_dataset
 from churn.metrics import classification_metrics
-from catboost import CatBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
 from churn.features import build_linear_preprocessor
-from churn.models import MODEL_NAMES, make_model
+from churn.models import MODEL_NAMES, CatBoostCatClassifier, make_model
 from churn.splits import DEFAULT_SPLITS_PATH, load_or_create_splits, split_masks
 
 SEED = 42
@@ -22,13 +21,13 @@ def make_ablation_models(seed: int) -> dict[str, Pipeline]:
     что отдельная обработка категорий для деревьев действительно оправдана."""
     rf = make_model("random_forest", seed=seed).named_steps["model"].get_params()
     cb = make_model("catboost", seed=seed).named_steps["model"].get_params()
-    cb.pop("cat_features")
+    cb["cat_features"] = ()
     return {
         "random_forest_onehot": Pipeline(
             [("prep", build_linear_preprocessor()), ("model", RandomForestClassifier(**rf))]
         ),
         "catboost_onehot": Pipeline(
-            [("prep", build_linear_preprocessor()), ("model", CatBoostClassifier(**cb))]
+            [("prep", build_linear_preprocessor()), ("model", CatBoostCatClassifier(**cb))]
         ),
     }
 
