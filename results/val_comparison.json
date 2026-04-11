@@ -108,13 +108,6 @@
     },
     "catboost": {
       "params": {
-        "iterations": 500,
-        "learning_rate": 0.05,
-        "depth": 6,
-        "thread_count": 4,
-        "random_seed": 42,
-        "verbose": false,
-        "allow_writing_files": false,
         "cat_features": [
           "gender",
           "Partner",
@@ -131,7 +124,13 @@
           "Contract",
           "PaperlessBilling",
           "PaymentMethod"
-        ]
+        ],
+        "depth": 6,
+        "iterations": 500,
+        "l2_leaf_reg": 3.0,
+        "learning_rate": 0.05,
+        "random_seed": 42,
+        "thread_count": 4
       },
       "val": {
         "roc_auc": 0.8328592833707923,
@@ -187,13 +186,13 @@
     },
     "catboost_onehot": {
       "params": {
-        "iterations": 500,
-        "learning_rate": 0.05,
+        "cat_features": [],
         "depth": 6,
-        "thread_count": 4,
+        "iterations": 500,
+        "l2_leaf_reg": 3.0,
+        "learning_rate": 0.05,
         "random_seed": 42,
-        "verbose": false,
-        "allow_writing_files": false
+        "thread_count": 4
       },
       "val": {
         "roc_auc": 0.8272572270014725,

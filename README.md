@@ -20,6 +20,7 @@ pip install -r requirements.txt
 python -m churn.download_data   # скачивание и проверка SHA-256
 python -m churn.check_data      # проверка схемы, распределение цели -> results/data_summary.json
 python -m churn.compare_models --ablation   # все модели на validation -> results/val_comparison.json
+python -m churn.run_cv          # 5-fold CV и подбор параметров -> results/cv_search.json, cv_candidates.csv (~3.5 мин на 4 CPU)
 pytest -q
 ```
 
