@@ -22,6 +22,7 @@ python -m churn.check_data      # проверка схемы, распреде�
 python -m churn.compare_models --ablation   # все модели на validation -> results/val_comparison.json
 python -m churn.run_cv          # 5-fold CV и подбор параметров -> results/cv_search.json, cv_candidates.csv (~3.5 мин на 4 CPU)
 python -m churn.final_eval      # порог по OOF и однократная оценка на test -> results/final_evaluation.json
+python -m churn.analysis        # важность признаков, анализ ошибок, проверка утечки -> results/analysis_summary.json
 pytest -q
 ```
 
