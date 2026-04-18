@@ -65,8 +65,9 @@ def catboost_importance(model, X) -> pd.DataFrame:
 
 def add_groups(X: pd.DataFrame) -> pd.DataFrame:
     out = X.copy()
-    out["tenure_group"] = pd.cut(out["tenure"], TENURE_BINS, labels=TENURE_LABELS).astype(str)
-    out["monthly_charges_group"] = pd.cut(out["MonthlyCharges"], CHARGES_BINS, labels=CHARGES_LABELS).astype(str)
+    # Упорядоченные категории: группы в таблицах и на графиках идут по возрастанию.
+    out["tenure_group"] = pd.cut(out["tenure"], TENURE_BINS, labels=TENURE_LABELS)
+    out["monthly_charges_group"] = pd.cut(out["MonthlyCharges"], CHARGES_BINS, labels=CHARGES_LABELS)
     return out
 
 
@@ -80,7 +81,7 @@ def error_table(X: pd.DataFrame, y: pd.Series, proba: np.ndarray, threshold: flo
     total_fp, total_fn = df["fp"].sum(), df["fn"].sum()
     rows = []
     for column in GROUP_COLUMNS:
-        for value, g in df.groupby(column):
+        for value, g in df.groupby(column, observed=True):
             rows.append({
                 "feature": column,
                 "value": str(value),
@@ -130,12 +131,13 @@ def plot_errors(errors: pd.DataFrame, path: Path) -> None:
     for ax, column in zip(axes, columns):
         sub = errors[errors["feature"] == column]
         pos = np.arange(len(sub))
-        ax.barh(pos - 0.2, sub["fp_rate"], height=0.4, label="FP rate (среди оставшихся)")
-        ax.barh(pos + 0.2, sub["fn_rate"], height=0.4, label="FN rate (среди ушедших)")
+        ax.barh(pos - 0.2, sub["fp_rate"], height=0.4, label="FP rate (доля ложных тревог среди оставшихся)")
+        ax.barh(pos + 0.2, sub["fn_rate"], height=0.4, label="FN rate (доля пропущенных среди ушедших)")
         ax.set_yticks(pos, sub["value"])
         ax.set(title=column, xlim=(0, 1))
-    axes[0].legend(loc="lower right", fontsize=8)
-    fig.tight_layout()
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
     fig.savefig(path, dpi=90)
     plt.close(fig)
 

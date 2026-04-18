@@ -9,8 +9,8 @@ from tests.conftest import DATA_PATH
 def test_groups_cover_all_rows(raw_df):
     X, _, _ = load_dataset(DATA_PATH)
     groups = add_groups(X)
-    assert not groups["tenure_group"].eq("nan").any()
-    assert not groups["monthly_charges_group"].eq("nan").any()
+    assert groups["tenure_group"].notna().all()
+    assert groups["monthly_charges_group"].notna().all()
 
 
 def test_error_table_counts_are_consistent(raw_df):
