@@ -9,37 +9,16 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_validat
 from churn.models import make_model
 
 SCORING = {"roc_auc": "roc_auc", "pr_auc": "average_precision"}
-SELECTION_METRIC = "pr_auc"
-
-# Небольшие сетки: несколько осмысленных значений самых влиятельных параметров.
-PARAM_GRIDS: dict[str, dict[str, list]] = {
-    "dummy": {},
-    "logreg": {
-        "C": [0.01, 0.1, 1.0, 10.0],
-        "class_weight": [None, "balanced"],
-    },
-    "random_forest": {
-        "n_estimators": [300],
-        "max_depth": [None, 8, 12],
-        "min_samples_leaf": [1, 5, 20],
-        "max_features": ["sqrt", 0.5],
-    },
-    "catboost": {
-        "iterations": [500],
-        "depth": [4, 6],
-        "learning_rate": [0.03, 0.1],
-        "l2_leaf_reg": [3, 10],
-    },
-}
-
 
 def make_cv(n_splits: int = 5, seed: int = 42) -> StratifiedKFold:
     return StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
 
-def search_model(name: str, X: pd.DataFrame, y: pd.Series, cv, seed: int = 42, grid=None) -> dict:
-    """Перебирает сетку для одной модели и возвращает лучшие параметры и все кандидаты."""
-    grid = PARAM_GRIDS[name] if grid is None else grid
+def search_model(
+    name: str, X: pd.DataFrame, y: pd.Series, cv, grid: dict, seed: int = 42, selection_metric: str = "pr_auc"
+) -> dict:
+    """Перебирает сетку для одной модели и возвращает лучшие параметры и все кандидаты.
+    Пустая сетка означает модель без параметров: только кросс-валидация."""
     pipeline = make_model(name, seed=seed)
     if not grid:
         scores = cross_validate(pipeline, X, y, cv=cv, scoring=SCORING)
@@ -55,7 +34,7 @@ def search_model(name: str, X: pd.DataFrame, y: pd.Series, cv, seed: int = 42, g
         pipeline,
         {f"model__{key}": values for key, values in grid.items()},
         scoring=SCORING,
-        refit=SELECTION_METRIC,
+        refit=selection_metric,
         cv=cv,
         n_jobs=1,
     )

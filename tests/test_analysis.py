@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 from churn.analysis import GROUP_COLUMNS, add_groups, error_table
 from churn.data import load_dataset

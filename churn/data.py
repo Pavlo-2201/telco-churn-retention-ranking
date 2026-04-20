@@ -168,6 +168,23 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Превращает сырые записи клиентов (в формате исходного CSV) в признаки модели.
+
+    Используется на инференсе: проверяет наличие нужных столбцов, применяет те же
+    построчные правила, что и clean_data, и отбрасывает лишние столбцы
+    (customerID, Churn и любые другие).
+    """
+    missing = [column for column in FEATURES if column not in df.columns]
+    if missing:
+        raise ValueError(f"Во входных данных нет столбцов: {missing}")
+    out = df[FEATURES].copy()
+    if not pd.api.types.is_numeric_dtype(out["TotalCharges"]):
+        out["TotalCharges"] = parse_total_charges(out["TotalCharges"])
+    out["TotalCharges"] = out["TotalCharges"].mask(out["tenure"].eq(0) & out["TotalCharges"].isna(), 0.0)
+    return out
+
+
 def load_dataset(path: Path = DEFAULT_DATA_PATH) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     """Возвращает признаки X (без customerID), цель y и идентификаторы."""
     raw = load_raw(path)

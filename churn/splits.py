@@ -35,7 +35,12 @@ def save_splits(splits: pd.DataFrame, path: Path = DEFAULT_SPLITS_PATH) -> None:
 
 
 def load_or_create_splits(
-    ids: pd.Series, y: pd.Series, path: Path = DEFAULT_SPLITS_PATH, seed: int = 42
+    ids: pd.Series,
+    y: pd.Series,
+    path: Path = DEFAULT_SPLITS_PATH,
+    seed: int = 42,
+    test_size: float = 0.2,
+    val_size: float = 0.2,
 ) -> pd.DataFrame:
     path = Path(path)
     if path.exists():
@@ -43,7 +48,7 @@ def load_or_create_splits(
         if set(splits["customerID"]) != set(ids):
             raise ValueError(f"{path} не соответствует текущим данным; удалите его и пересоздайте")
         return splits
-    splits = make_splits(ids, y, seed=seed)
+    splits = make_splits(ids, y, seed=seed, test_size=test_size, val_size=val_size)
     save_splits(splits, path)
     return splits
 

@@ -1,0 +1,30 @@
+{
+  "seed": 42,
+  "data": {
+    "path": "data/raw/Telco-Customer-Churn.csv",
+    "splits_path": "results/splits.csv",
+    "test_size": 0.2,
+    "val_size": 0.2
+  },
+  "cv": {
+    "n_folds": 3,
+    "oof_seed": 43,
+    "selection_metric": "pr_auc"
+  },
+  "threshold": {
+    "criterion": "f1",
+    "grid_start": 0.05,
+    "grid_stop": 0.95,
+    "grid_step": 0.01
+  },
+  "models": {
+    "dummy": {},
+    "logreg": {"C": [0.1, 1.0]},
+    "catboost": {"iterations": [50], "depth": [4]}
+  },
+  "output": {
+    "results_dir": "smoke_run/results",
+    "figures_dir": "smoke_run/figures",
+    "artifact_path": "smoke_run/churn_model.joblib"
+  }
+}
