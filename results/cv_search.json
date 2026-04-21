@@ -107,7 +107,7 @@
         ]
       },
       "n_candidates": 8,
-      "seconds": 3.4
+      "seconds": 8.2
     },
     "random_forest": {
       "best_params": {
@@ -137,7 +137,7 @@
         ]
       },
       "n_candidates": 18,
-      "seconds": 90.0
+      "seconds": 119.5
     },
     "catboost": {
       "best_params": {
@@ -167,7 +167,7 @@
         ]
       },
       "n_candidates": 8,
-      "seconds": 107.7
+      "seconds": 108.9
     }
   },
   "best_model": "catboost"

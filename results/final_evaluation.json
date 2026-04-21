@@ -11,7 +11,7 @@
     "data": "out-of-fold predictions on train+val",
     "n_folds": 5,
     "cv_seed": 43,
-    "criterion": "max F1",
+    "criterion": "f1",
     "threshold": 0.35
   },
   "oof_dev": {
