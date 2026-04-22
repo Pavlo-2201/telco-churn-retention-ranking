@@ -22,3 +22,5 @@ artifacts/
 # Секреты
 .env
 smoke_run/
+*.egg-info/
+.ruff_cache/

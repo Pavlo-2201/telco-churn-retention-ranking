@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tabular-ml-pipeline"
+version = "2.0.0"
+description = "Ранжирование клиентов телеком-оператора по риску ухода (IBM Telco Customer Churn) под бюджет удержания"
+readme = "README.md"
+requires-python = ">=3.11"
+# Диапазоны совместимости; точные версии проверенного окружения — в requirements.txt.
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "scikit-learn>=1.6",
+    "scipy>=1.13",
+    "catboost>=1.2",
+    "matplotlib>=3.8",
+    "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+notebook = ["ipykernel>=6", "nbclient>=0.10", "nbformat>=5.10"]
+
+[tool.setuptools]
+packages = ["churn"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E402", "B905"]  # E402: matplotlib.use("Agg") до импорта pyplot; B905: zip без strict допустим

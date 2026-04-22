@@ -1,0 +1,104 @@
+{
+  "model": "catboost",
+  "threshold": 0.35,
+  "data": "train+val only (OOF predictions, CV permutation importance)",
+  "top_permutation_features": [
+    "tenure",
+    "Contract",
+    "InternetService",
+    "MonthlyCharges",
+    "TotalCharges"
+  ],
+  "highest_fp_rate_groups": [
+    {
+      "feature": "tenure_group",
+      "value": "0-6",
+      "n": 1170,
+      "fp_rate": 0.5313
+    },
+    {
+      "feature": "PaymentMethod",
+      "value": "Electronic check",
+      "n": 1891,
+      "fp_rate": 0.4756
+    },
+    {
+      "feature": "Contract",
+      "value": "Month-to-month",
+      "n": 3102,
+      "fp_rate": 0.4443
+    },
+    {
+      "feature": "TechSupport",
+      "value": "No",
+      "n": 2771,
+      "fp_rate": 0.4133
+    },
+    {
+      "feature": "InternetService",
+      "value": "Fiber optic",
+      "n": 2483,
+      "fp_rate": 0.3985
+    }
+  ],
+  "highest_fn_rate_groups": [
+    {
+      "feature": "Contract",
+      "value": "Two year",
+      "n": 1359,
+      "fn_rate": 1.0
+    },
+    {
+      "feature": "Contract",
+      "value": "One year",
+      "n": 1173,
+      "fn_rate": 0.9538
+    },
+    {
+      "feature": "InternetService",
+      "value": "No",
+      "n": 1214,
+      "fn_rate": 0.8295
+    },
+    {
+      "feature": "TechSupport",
+      "value": "No internet service",
+      "n": 1214,
+      "fn_rate": 0.8295
+    },
+    {
+      "feature": "tenure_group",
+      "value": "49-72",
+      "n": 1789,
+      "fn_rate": 0.7472
+    }
+  ],
+  "leakage_check": {
+    "single_feature_roc_auc": {
+      "Contract": 0.7395,
+      "tenure": 0.7262,
+      "OnlineSecurity": 0.7075,
+      "TechSupport": 0.7048,
+      "InternetService": 0.6976,
+      "OnlineBackup": 0.6789,
+      "PaymentMethod": 0.6763,
+      "DeviceProtection": 0.6695,
+      "MonthlyCharges": 0.6632,
+      "TotalCharges": 0.6401,
+      "StreamingMovies": 0.6207,
+      "StreamingTV": 0.6166,
+      "PaperlessBilling": 0.6102,
+      "Dependents": 0.5867,
+      "Partner": 0.5825,
+      "SeniorCitizen": 0.5609,
+      "MultipleLines": 0.521,
+      "PhoneService": 0.5061,
+      "gender": 0.4925
+    },
+    "suspicious_threshold": 0.9,
+    "suspicious_features": [],
+    "id_in_features": false,
+    "rows_with_duplicate_features": 48,
+    "duplicate_feature_groups_with_conflicting_labels": 11
+  }
+}

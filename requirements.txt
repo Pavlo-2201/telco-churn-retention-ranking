@@ -1,9 +1,12 @@
 numpy==2.4.1
 pandas==3.0.0
 scikit-learn==1.8.0
+scipy==1.17.1
+joblib==1.5.3
 catboost==1.2.10
 matplotlib==3.10.8
 pytest==9.0.2
+ruff==0.15.11
 # Для выполнения notebooks/01_eda.ipynb
 ipykernel==7.0.0
 nbclient==0.10.4
