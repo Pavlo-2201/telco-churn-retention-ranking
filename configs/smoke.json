@@ -1,26 +1,59 @@
 {
   "seed": 42,
   "data": {
-    "path": "data/raw/Telco-Customer-Churn.csv",
-    "splits_path": "results/splits.csv",
-    "test_size": 0.2,
-    "val_size": 0.2
+    "path": "data/synthetic/telco_synthetic.csv",
+    "download": false,
+    "splits_path": "smoke_run/results/splits.csv",
+    "test_size": 0.2
   },
   "cv": {
-    "n_folds": 3,
-    "oof_seed": 43,
-    "selection_metric": "pr_auc"
+    "n_splits": 3,
+    "n_repeats": 2,
+    "tuning_seed": 42,
+    "comparison_seed": 43,
+    "oof_seed": 44
   },
-  "threshold": {
-    "criterion": "f1",
-    "grid_start": 0.05,
-    "grid_stop": 0.95,
-    "grid_step": 0.01
+  "ranking": {
+    "top_fractions": [0.1, 0.2]
+  },
+  "selection": {
+    "metric": "lift@10",
+    "tuning_metric": "log_loss",
+    "baseline": "logreg",
+    "alpha": 0.05,
+    "rule": "Модель заменяет logreg, только если её lift@10 выше значимо."
+  },
+  "business": {
+    "note": "Допущения.",
+    "budget_fraction": 0.3,
+    "contact_cost": 10,
+    "discount_cost": 100,
+    "retention_rate": 0.3,
+    "customer_value": 800,
+    "sensitivity_factors": [0.5, 2.0]
+  },
+  "calibration": {
+    "method": "sigmoid",
+    "apply": "auto",
+    "n_bins": 5
+  },
+  "bootstrap": {
+    "n_resamples": 50,
+    "seed": 7,
+    "confidence": 0.95
+  },
+  "features": {
+    "engineered": ["n_services"],
+    "candidates": ["n_services", "avg_charge"]
   },
   "models": {
     "dummy": {},
-    "logreg": {"C": [0.1, 1.0]},
-    "catboost": {"iterations": [50], "depth": [4]}
+    "logreg": {"C": [0.1, 1.0], "tenure_spline": [true]},
+    "catboost": {"iterations": [100], "early_stopping_rounds": [20], "one_hot_max_size": [4], "depth": [2]}
+  },
+  "analysis": {
+    "permutation_repeats": 1,
+    "dominant_feature_auc": 0.9
   },
   "output": {
     "results_dir": "smoke_run/results",

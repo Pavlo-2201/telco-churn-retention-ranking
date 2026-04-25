@@ -1,4 +1,4 @@
-"""Прогноз оттока для новых клиентов."""
+"""Оценка риска ухода для клиентов и отбор в список для удержания."""
 
 import argparse
 from pathlib import Path
@@ -23,12 +23,12 @@ def main() -> None:
     if "customerID" in records.columns:
         result["customerID"] = records["customerID"]
     result["churn_probability"] = proba.round(6)
-    result["churn_prediction"] = (proba >= model.threshold).astype(int)
+    result["in_retention_list"] = (proba >= model.threshold).astype(int)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(args.output, index=False)
     print(
-        f"Модель {model.model_name}, порог {model.threshold:.2f}: {len(result)} клиентов, "
-        f"прогноз ухода у {int(result['churn_prediction'].sum())}. Сохранено в {args.output}"
+        f"Модель {model.model_name}, порог {model.threshold:.3f}: {len(result)} клиентов, "
+        f"в список для удержания попали {int(result['in_retention_list'].sum())}. Сохранено в {args.output}"
     )
 
 
