@@ -2,33 +2,87 @@
   "seed": 42,
   "data": {
     "path": "data/raw/Telco-Customer-Churn.csv",
+    "download": true,
     "splits_path": "results/splits.csv",
-    "test_size": 0.2,
-    "val_size": 0.2
+    "test_size": 0.2
   },
   "cv": {
-    "n_folds": 5,
-    "oof_seed": 43,
-    "selection_metric": "pr_auc"
+    "n_splits": 5,
+    "n_repeats": 5,
+    "tuning_seed": 42,
+    "comparison_seed": 43,
+    "oof_seed": 44
   },
-  "threshold": {
-    "criterion": "f1",
-    "grid_start": 0.05,
-    "grid_stop": 0.95,
-    "grid_step": 0.01
+  "ranking": {
+    "top_fractions": [
+      0.1,
+      0.2
+    ]
+  },
+  "selection": {
+    "metric": "lift@10",
+    "tuning_metric": "log_loss",
+    "baseline": "logreg",
+    "alpha": 0.05,
+    "rule": "Правило записано до запуска: модель заменяет logreg, только если её lift@10 выше значимо (corrected t-test Nadeau-Bengio, p < alpha). Иначе выбирается logreg: проще, коэффициенты понятны, нет лишней зависимости."
+  },
+  "business": {
+    "note": "Все денежные числа - допущения для иллюстрации, а не данные оператора. Единица - условные деньги (у.е.).",
+    "budget_fraction": 0.3,
+    "contact_cost": 10,
+    "discount_cost": 100,
+    "retention_rate": 0.3,
+    "customer_value": 800,
+    "sensitivity_factors": [
+      0.5,
+      2.0
+    ]
+  },
+  "calibration": {
+    "method": "sigmoid",
+    "apply": "auto",
+    "n_bins": 10
+  },
+  "bootstrap": {
+    "n_resamples": 1000,
+    "seed": 7,
+    "confidence": 0.95
+  },
+  "features": {
+    "engineered": [
+      "drop_total_charges",
+      "drop_monthly_charges"
+    ],
+    "candidates": [
+      "n_services",
+      "no_internet",
+      "avg_charge",
+      "contract_payment",
+      "tenure_bins",
+      "contract_tenure",
+      "drop_total_charges",
+      "drop_monthly_charges"
+    ]
   },
   "models": {
     "dummy": {},
     "logreg": {
       "C": [
-        0.01,
         0.1,
+        0.3,
         1.0,
-        10.0
+        3.0,
+        10.0,
+        30.0,
+        100.0
       ],
-      "class_weight": [
-        null,
-        "balanced"
+      "tenure_spline": [
+        false,
+        true
+      ],
+      "n_knots": [
+        4,
+        6
       ]
     },
     "random_forest": {
@@ -36,12 +90,10 @@
         300
       ],
       "max_depth": [
-        null,
         8,
         12
       ],
       "min_samples_leaf": [
-        1,
         5,
         20
       ],
@@ -52,21 +104,34 @@
     },
     "catboost": {
       "iterations": [
-        500
+        5000
+      ],
+      "early_stopping_rounds": [
+        200
+      ],
+      "one_hot_max_size": [
+        4
       ],
       "depth": [
-        4,
-        6
+        2,
+        3,
+        4
       ],
       "learning_rate": [
-        0.03,
-        0.1
+        0.01,
+        0.02,
+        0.03
       ],
       "l2_leaf_reg": [
         3,
-        10
+        10,
+        30
       ]
     }
+  },
+  "analysis": {
+    "permutation_repeats": 5,
+    "dominant_feature_auc": 0.9
   },
   "output": {
     "results_dir": "results",

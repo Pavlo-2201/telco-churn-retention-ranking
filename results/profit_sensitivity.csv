@@ -1,0 +1,10 @@
+parameter,factor,value,break_even_probability,optimal_k_fraction,optimal_profit,k_fraction_within_budget,profit_within_budget
+base,1.0,,0.3548,0.3319,129410.0,0.2579,128780.0
+contact_cost,0.5,5.0,0.3387,0.3319,138760.0,0.2634,136200.0
+contact_cost,2.0,20.0,0.3871,0.2579,114250.0,0.2579,114250.0
+discount_cost,0.5,50.0,0.2182,0.4618,198905.0,0.3,176625.0
+discount_cost,2.0,200.0,0.5526,0.1535,56230.0,0.1535,56230.0
+retention_rate,0.5,0.15,0.5366,0.2029,33555.0,0.2029,33555.0
+retention_rate,2.0,0.6,0.2115,0.4618,385100.0,0.3,339820.0
+customer_value,0.5,400.0,0.5789,0.1535,23790.0,0.1535,23790.0
+customer_value,2.0,1600.0,0.2,0.4618,423830.0,0.3,370150.0

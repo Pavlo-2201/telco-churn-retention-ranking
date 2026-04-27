@@ -1,102 +1,108 @@
 {
-  "model": "catboost",
-  "threshold": 0.35,
-  "data": "train+val only (OOF predictions, CV permutation importance)",
-  "top_permutation_features": [
+  "model": {
+    "name": "logreg",
+    "params": {
+      "C": 30.0,
+      "n_knots": 6,
+      "tenure_spline": true
+    },
+    "features": [
+      "drop_total_charges",
+      "drop_monthly_charges"
+    ]
+  },
+  "operating_point": {
+    "k_fraction": 0.2579,
+    "threshold": 0.4382
+  },
+  "data": "train only: OOF-предсказания, SHAP и permutation importance на отложенных фолдах",
+  "top_features_by_mean_abs_shap": [
     "tenure",
     "Contract",
     "InternetService",
-    "MonthlyCharges",
-    "TotalCharges"
+    "MultipleLines",
+    "PaperlessBilling",
+    "OnlineSecurity"
   ],
-  "highest_fp_rate_groups": [
-    {
-      "feature": "tenure_group",
-      "value": "0-6",
-      "n": 1170,
-      "fp_rate": 0.5313
-    },
-    {
-      "feature": "PaymentMethod",
-      "value": "Electronic check",
-      "n": 1891,
-      "fp_rate": 0.4756
-    },
-    {
-      "feature": "Contract",
-      "value": "Month-to-month",
+  "contract_errors": {
+    "Month-to-month": {
       "n": 3102,
-      "fp_rate": 0.4443
+      "churn_rate": 0.4275,
+      "selected_share": 0.4674,
+      "missed_rate": 0.2986,
+      "wasted_rate": 0.2928,
+      "share_of_all_missed": 0.7009
     },
-    {
-      "feature": "TechSupport",
-      "value": "No",
-      "n": 2771,
-      "fp_rate": 0.4133
-    },
-    {
-      "feature": "InternetService",
-      "value": "Fiber optic",
-      "n": 2483,
-      "fp_rate": 0.3985
-    }
-  ],
-  "highest_fn_rate_groups": [
-    {
-      "feature": "Contract",
-      "value": "Two year",
-      "n": 1359,
-      "fn_rate": 1.0
-    },
-    {
-      "feature": "Contract",
-      "value": "One year",
+    "One year": {
       "n": 1173,
-      "fn_rate": 0.9538
+      "churn_rate": 0.1108,
+      "selected_share": 0.0017,
+      "missed_rate": 1.0,
+      "wasted_rate": 0.0019,
+      "share_of_all_missed": 0.2301
     },
-    {
-      "feature": "InternetService",
-      "value": "No",
-      "n": 1214,
-      "fn_rate": 0.8295
-    },
-    {
-      "feature": "TechSupport",
-      "value": "No internet service",
-      "n": 1214,
-      "fn_rate": 0.8295
-    },
-    {
-      "feature": "tenure_group",
-      "value": "49-72",
-      "n": 1789,
-      "fn_rate": 0.7472
+    "Two year": {
+      "n": 1359,
+      "churn_rate": 0.0287,
+      "selected_share": 0.0,
+      "missed_rate": 1.0,
+      "wasted_rate": 0.0,
+      "share_of_all_missed": 0.069
     }
-  ],
-  "leakage_check": {
+  },
+  "one_year_missed_vs_caught": {
+    "caught": {
+      "n": 0
+    },
+    "missed": {
+      "n": 130,
+      "median_tenure": 49.0,
+      "median_monthly_charges": 95.05,
+      "share_fiber": 0.6230769230769231,
+      "share_electronic_check": 0.38461538461538464,
+      "median_proba": 0.166597
+    }
+  },
+  "two_year_missed_vs_caught": {
+    "caught": {
+      "n": 0
+    },
+    "missed": {
+      "n": 39,
+      "median_tenure": 66.0,
+      "median_monthly_charges": 103.4,
+      "share_fiber": 0.6153846153846154,
+      "share_electronic_check": 0.2564102564102564,
+      "median_proba": 0.056702
+    }
+  },
+  "dominant_feature_check": {
+    "description": "одномерный ROC-AUC каждого признака; значение выше порога означало бы, что признак почти совпадает с целью",
     "single_feature_roc_auc": {
       "Contract": 0.7395,
-      "tenure": 0.7262,
-      "OnlineSecurity": 0.7075,
+      "tenure": 0.7305,
+      "OnlineSecurity": 0.7076,
       "TechSupport": 0.7048,
-      "InternetService": 0.6976,
-      "OnlineBackup": 0.6789,
-      "PaymentMethod": 0.6763,
-      "DeviceProtection": 0.6695,
-      "MonthlyCharges": 0.6632,
-      "TotalCharges": 0.6401,
-      "StreamingMovies": 0.6207,
-      "StreamingTV": 0.6166,
+      "InternetService": 0.6975,
+      "OnlineBackup": 0.6791,
+      "PaymentMethod": 0.6765,
+      "DeviceProtection": 0.6694,
+      "MonthlyCharges": 0.6681,
+      "TotalCharges": 0.6409,
+      "StreamingMovies": 0.6206,
+      "StreamingTV": 0.6167,
       "PaperlessBilling": 0.6102,
       "Dependents": 0.5867,
       "Partner": 0.5825,
       "SeniorCitizen": 0.5609,
-      "MultipleLines": 0.521,
+      "MultipleLines": 0.519,
       "PhoneService": 0.5061,
-      "gender": 0.4925
+      "gender": 0.4874
     },
-    "suspicious_threshold": 0.9,
-    "suspicious_features": [],
+    "threshold": 0.9,
+    "flagged": []
+  },
+  "data_checks": {
     "id_in_features": false,
     "rows_with_duplicate_features": 48,
     "duplicate_feature_groups_with_conflicting_labels": 11

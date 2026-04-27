@@ -1,63 +1,402 @@
 {
-  "model": "catboost",
-  "params": {
-    "depth": 4,
-    "iterations": 500,
-    "l2_leaf_reg": 10,
-    "learning_rate": 0.03
+  "run_id": "b69f0c805942",
+  "task": "ранжирование клиентов по риску ухода по снимку данных; бюджет на удержание K клиентов",
+  "model": {
+    "name": "logreg",
+    "params": {
+      "C": 30.0,
+      "n_knots": 6,
+      "tenure_spline": true
+    },
+    "features": [
+      "drop_total_charges",
+      "drop_monthly_charges"
+    ]
   },
-  "seed": 42,
-  "threshold_selection": {
-    "data": "out-of-fold predictions on train+val",
-    "n_folds": 5,
-    "cv_seed": 43,
-    "criterion": "f1",
-    "threshold": 0.35
+  "selection": {
+    "metric": "lift@10",
+    "baseline": "logreg",
+    "alpha": 0.05,
+    "rule": "Правило записано до запуска: модель заменяет logreg, только если её lift@10 выше значимо (corrected t-test Nadeau-Bengio, p < alpha). Иначе выбирается logreg: проще, коэффициенты понятны, нет лишней зависимости.",
+    "significantly_better": [],
+    "chosen": "logreg"
   },
-  "oof_dev": {
-    "at_selected_threshold": {
-      "roc_auc": 0.8501567195475617,
-      "pr_auc": 0.671144769238604,
-      "threshold": 0.35,
-      "f1": 0.639834270494229,
-      "precision": 0.5737791932059448,
-      "recall": 0.7230769230769231,
-      "confusion_matrix": {
-        "tn": 3336,
-        "fp": 803,
-        "fn": 414,
-        "tp": 1081
+  "calibration": {
+    "method": "sigmoid",
+    "rule": "auto: калибратор применяется, если 95% CI улучшения Brier на OOF целиком больше 0",
+    "raw": {
+      "brier": 0.13255,
+      "mean_predicted": 0.26524,
+      "observed_rate": 0.26535,
+      "calibration_intercept": -0.00872,
+      "calibration_slope": 0.98388,
+      "reliability_curve": [
+        {
+          "mean_predicted": 0.0086,
+          "observed_rate": 0.01418,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.02067,
+          "observed_rate": 0.02309,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.04281,
+          "observed_rate": 0.04085,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.08082,
+          "observed_rate": 0.09929,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.14282,
+          "observed_rate": 0.12789,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.22823,
+          "observed_rate": 0.23446,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.32439,
+          "observed_rate": 0.31915,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.44909,
+          "observed_rate": 0.4405,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.58735,
+          "observed_rate": 0.59147,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.76744,
+          "observed_rate": 0.76241,
+          "n": 564
+        }
+      ]
+    },
+    "calibrated": {
+      "brier": 0.13258,
+      "mean_predicted": 0.26539,
+      "observed_rate": 0.26535,
+      "calibration_intercept": 0.01217,
+      "calibration_slope": 1.02072,
+      "reliability_curve": [
+        {
+          "mean_predicted": 0.00998,
+          "observed_rate": 0.01418,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.0232,
+          "observed_rate": 0.02309,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.0467,
+          "observed_rate": 0.04085,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.08593,
+          "observed_rate": 0.09929,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.14825,
+          "observed_rate": 0.12789,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.23237,
+          "observed_rate": 0.23446,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.32567,
+          "observed_rate": 0.32092,
+          "n": 564
+        },
+        {
+          "mean_predicted": 0.44582,
+          "observed_rate": 0.43339,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.57933,
+          "observed_rate": 0.59858,
+          "n": 563
+        },
+        {
+          "mean_predicted": 0.75648,
+          "observed_rate": 0.76064,
+          "n": 564
+        }
+      ]
+    },
+    "brier_improvement": {
+      "value": -3e-05,
+      "ci_low": -0.00015,
+      "ci_high": 9e-05
+    },
+    "applied": false
+  },
+  "oof_train": {
+    "n": 5634,
+    "cv": "StratifiedKFold(5, seed=44)",
+    "metrics": {
+      "roc_auc": {
+        "value": 0.85093,
+        "ci_low": 0.84017,
+        "ci_high": 0.86138
+      },
+      "pr_auc": {
+        "value": 0.67137,
+        "ci_low": 0.64434,
+        "ci_high": 0.69582
+      },
+      "brier": {
+        "value": 0.13255,
+        "ci_low": 0.12715,
+        "ci_high": 0.13785
+      },
+      "log_loss": {
+        "value": 0.40967,
+        "ci_low": 0.3954,
+        "ci_high": 0.42397
+      },
+      "lift@10": {
+        "value": 2.8783,
+        "ci_low": 2.71373,
+        "ci_high": 3.0015
+      },
+      "precision@10": {
+        "value": 0.76377,
+        "ci_low": 0.71403,
+        "ci_high": 0.79751
+      },
+      "recall@10": {
+        "value": 0.28763,
+        "ci_low": 0.27118,
+        "ci_high": 0.29994
+      },
+      "lift@20": {
+        "value": 2.55139,
+        "ci_low": 2.45353,
+        "ci_high": 2.66126
+      },
+      "precision@20": {
+        "value": 0.67702,
+        "ci_low": 0.64949,
+        "ci_high": 0.7063
+      },
+      "recall@20": {
+        "value": 0.51037,
+        "ci_low": 0.49079,
+        "ci_high": 0.53235
+      },
+      "precision_at_threshold": {
+        "value": 0.64074,
+        "ci_low": 0.61463,
+        "ci_high": 0.6655
+      },
+      "recall_at_threshold": {
+        "value": 0.62274,
+        "ci_low": 0.6005,
+        "ci_high": 0.64765
+      },
+      "profit_per_customer_in_base": {
+        "value": 22.85765,
+        "ci_low": 20.68832,
+        "ci_high": 24.98647
       }
     },
-    "at_0.5": {
-      "roc_auc": 0.8501567195475617,
-      "pr_auc": 0.671144769238604,
-      "threshold": 0.5,
-      "f1": 0.6050791313949209,
-      "precision": 0.6726677577741408,
-      "recall": 0.5498327759197325,
+    "at_threshold": {
+      "roc_auc": 0.85093,
+      "pr_auc": 0.67137,
+      "threshold": 0.4382,
+      "f1": 0.63161,
+      "precision": 0.64074,
+      "recall": 0.62274,
+      "contacted_share": 0.2579,
       "confusion_matrix": {
-        "tn": 3739,
-        "fp": 400,
-        "fn": 673,
-        "tp": 822
+        "tn": 3617,
+        "fp": 522,
+        "fn": 564,
+        "tp": 931
+      }
+    }
+  },
+  "business": {
+    "assumptions": {
+      "note": "Все денежные числа - допущения для иллюстрации, а не данные оператора. Единица - условные деньги (у.е.).",
+      "budget_fraction": 0.3,
+      "contact_cost": 10,
+      "discount_cost": 100,
+      "retention_rate": 0.3,
+      "customer_value": 800,
+      "sensitivity_factors": [
+        0.5,
+        2.0
+      ]
+    },
+    "break_even_probability": 0.35484,
+    "operating_point": {
+      "k": 1453,
+      "k_fraction": 0.2579,
+      "threshold": 0.4382,
+      "profit": 128780.0,
+      "profit_per_customer_in_base": 22.85765,
+      "precision": 0.64074,
+      "recall": 0.62274,
+      "budget_fraction": 0.3,
+      "budget_binding": true,
+      "unconstrained_k_fraction": 0.33191,
+      "unconstrained_profit": 129410.0
+    },
+    "segment_cutoffs": {
+      "global_k": 1870,
+      "global_profit": 129410.0,
+      "segment_cutoffs_profit": 130390.0,
+      "segments": {
+        "Month-to-month": {
+          "n": 3102,
+          "own_optimal_k": 1845,
+          "own_optimal_profit": 130300.0,
+          "k_in_global_top": 1843,
+          "profit_in_global_top": 130210.0
+        },
+        "One year": {
+          "n": 1173,
+          "own_optimal_k": 0,
+          "own_optimal_profit": 0.0,
+          "k_in_global_top": 27,
+          "profit_in_global_top": -800.0
+        },
+        "Two year": {
+          "n": 1359,
+          "own_optimal_k": 2,
+          "own_optimal_profit": 90.0,
+          "k_in_global_top": 0,
+          "profit_in_global_top": 0.0
+        }
       }
     }
   },
   "test": {
-    "roc_auc": 0.8447260327055723,
-    "pr_auc": 0.6661446045840282,
-    "threshold": 0.35,
-    "f1": 0.629976580796253,
-    "precision": 0.5604166666666667,
-    "recall": 0.7192513368983957,
-    "confusion_matrix": {
-      "tn": 824,
-      "fp": 211,
-      "fn": 105,
-      "tp": 269
-    }
+    "look_number": 2,
+    "warning": "test уже видели в предыдущих версиях; оценка немного оптимистична",
+    "n": 1409,
+    "churn_rate": 0.26544,
+    "metrics": {
+      "roc_auc": {
+        "value": 0.84853,
+        "ci_low": 0.82583,
+        "ci_high": 0.86997
+      },
+      "pr_auc": {
+        "value": 0.66647,
+        "ci_low": 0.61524,
+        "ci_high": 0.71603
+      },
+      "brier": {
+        "value": 0.1343,
+        "ci_low": 0.12437,
+        "ci_high": 0.14439
+      },
+      "log_loss": {
+        "value": 0.41125,
+        "ci_low": 0.38381,
+        "ci_high": 0.4395
+      },
+      "lift@10": {
+        "value": 2.88565,
+        "ci_low": 2.59651,
+        "ci_high": 3.21298
+      },
+      "precision@10": {
+        "value": 0.76596,
+        "ci_low": 0.68085,
+        "ci_high": 0.85124
+      },
+      "recall@10": {
+        "value": 0.28877,
+        "ci_low": 0.25984,
+        "ci_high": 0.32153
+      },
+      "lift@20": {
+        "value": 2.56502,
+        "ci_low": 2.37984,
+        "ci_high": 2.77102
+      },
+      "precision@20": {
+        "value": 0.68085,
+        "ci_low": 0.62411,
+        "ci_high": 0.73759
+      },
+      "recall@20": {
+        "value": 0.51337,
+        "ci_low": 0.47631,
+        "ci_high": 0.5546
+      },
+      "precision_at_threshold": {
+        "value": 0.61685,
+        "ci_low": 0.56741,
+        "ci_high": 0.66482
+      },
+      "recall_at_threshold": {
+        "value": 0.60695,
+        "ci_low": 0.55674,
+        "ci_high": 0.65952
+      },
+      "profit_per_customer_in_base": {
+        "value": 21.21363,
+        "ci_low": 16.86267,
+        "ci_high": 25.7704
+      }
+    },
+    "at_threshold": {
+      "roc_auc": 0.84853,
+      "pr_auc": 0.66647,
+      "threshold": 0.4382,
+      "f1": 0.61186,
+      "precision": 0.61685,
+      "recall": 0.60695,
+      "contacted_share": 0.26118,
+      "confusion_matrix": {
+        "tn": 894,
+        "fp": 141,
+        "fn": 147,
+        "tp": 227
+      }
+    },
+    "operating_point": {
+      "threshold": 0.4382,
+      "k_fraction": 0.26118,
+      "profit": 29890.0,
+      "profit_per_customer_in_base": 21.21363
+    },
+    "segments_note": "сегментные метрики на test — шум (ушедших с двухлетним контрактом в test: 9); смотрите OOF"
   },
-  "n_dev": 5634,
-  "n_test": 1409
+  "versions": {
+    "python": "3.13.16",
+    "numpy": "2.4.1",
+    "pandas": "3.0.0",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.18.1",
+    "catboost": "1.2.10",
+    "joblib": "1.6.0"
+  },
+  "data": {
+    "url": "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/d5371f5d83a446ad5673cbcca3b814b926491f8a/data/Telco-Customer-Churn.csv",
+    "sha256": "16320c9c1ec72448db59aa0a26a0b95401046bef5d02fd3aeb906448e3055e91"
+  }
 }

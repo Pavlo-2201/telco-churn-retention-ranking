@@ -1,0 +1,14 @@
+[
+  {
+    "look": 1,
+    "run_id": "v1",
+    "model": "catboost",
+    "note": "первая версия проекта: CatBoost с порогом по F1 оценён на этом же test (docs/v1/final_evaluation.json)"
+  },
+  {
+    "look": 2,
+    "run_id": "b69f0c805942",
+    "model": "logreg",
+    "note": "повторный взгляд на test"
+  }
+]

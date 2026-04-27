@@ -1,0 +1,9 @@
+feature,base,base_with_service_dummies,drop_total_charges,drop_both_with_service_dummies,all_numeric_candidates
+MonthlyCharges,3.23,861.37,1.07,,187.06
+TotalCharges,9.68,10.64,,,10.56
+avg_monthly_charge,,,,,184.31
+charge_growth,,,,,1.96
+n_services,,,,,4.73
+tenure,5.93,6.01,1.07,1.69,8.37
+tenure_one_year,,,,,2.05
+tenure_two_year,,,,,3.37
