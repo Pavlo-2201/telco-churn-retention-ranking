@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from churn.data import prepare_features
+from churn.metrics import ranking_order
 
 TRACKED_PACKAGES = ("numpy", "pandas", "scikit-learn", "scipy", "catboost", "joblib")
 
@@ -30,6 +31,20 @@ def library_versions() -> dict[str, str]:
 def version_mismatches(saved: dict[str, str], current: dict[str, str] | None = None) -> dict[str, tuple[str, str]]:
     current = current or library_versions()
     return {k: (v, current.get(k, "not installed")) for k, v in saved.items() if current.get(k) != v}
+
+
+def select_for_retention(proba, threshold: float, budget: int | None = None) -> np.ndarray:
+    """1 — клиент в списке: оценка не ниже порога точки работы, а при заданном бюджете
+    он ещё и среди budget клиентов с наибольшей оценкой (при равенстве — по порядку строк)."""
+    proba = np.asarray(proba, dtype=float)
+    selected = proba >= threshold
+    if budget is not None:
+        if budget < 0:
+            raise ValueError(f"Бюджет должен быть неотрицательным, получено {budget}")
+        top = np.zeros(len(proba), dtype=bool)
+        top[ranking_order(proba)[:budget]] = True
+        selected &= top
+    return selected.astype(int)
 
 
 @dataclass
@@ -51,9 +66,14 @@ class ChurnModel:
     def predict_proba(self, records: pd.DataFrame) -> np.ndarray:
         return self.pipeline.predict_proba(prepare_features(records))[:, 1]
 
-    def predict(self, records: pd.DataFrame) -> np.ndarray:
-        """1 — клиент попадает в список для удержания."""
-        return (self.predict_proba(records) >= self.threshold).astype(int)
+    def predict(self, records: pd.DataFrame, budget: int | None = None) -> np.ndarray:
+        """1 — клиент попадает в список для удержания (не больше budget клиентов, если он задан)."""
+        return select_for_retention(self.predict_proba(records), self.threshold, budget)
+
+    @property
+    def budget_fraction(self) -> float | None:
+        """Предел бюджета из конфигурации обучения, доля базы."""
+        return self.metadata.get("config", {}).get("business", {}).get("budget_fraction")
 
     def save(self, path: Path) -> None:
         path = Path(path)

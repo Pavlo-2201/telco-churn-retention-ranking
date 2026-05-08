@@ -23,9 +23,10 @@ jobs:
         run: pip install -r requirements.txt
       - name: Lint
         run: ruff check .
-      - name: Smoke run on synthetic data (no network)
+      - name: User scenario on synthetic data (no network)
         run: |
           python -m churn.synthetic
           python train.py --config configs/smoke.json --evaluate-test
+          python predict.py --model smoke_run/churn_model.joblib --input examples/new_customers.csv --output smoke_run/predictions.csv --budget 2
       - name: Tests
         run: pytest -q

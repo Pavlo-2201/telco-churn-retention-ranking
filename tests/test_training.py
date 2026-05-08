@@ -1,6 +1,7 @@
 """Сквозные проверки train.py/predict.py на синтетическом наборе (без сети)."""
 
 import json
+import os
 import subprocess
 import sys
 import warnings
@@ -11,7 +12,7 @@ import pytest
 
 from churn.config import load_config
 from churn.data import FEATURES, clean_data, prepare_features
-from churn.inference import ChurnModel
+from churn.inference import ChurnModel, select_for_retention
 from churn.training import run_training
 from tests.conftest import ROOT
 
@@ -128,21 +129,59 @@ def test_evaluate_test_flag_and_access_log(trained, synthetic_csv, synthetic_raw
     assert model.metadata["test"]["lift@10"] > 0
 
 
-def test_predict_cli(trained, tmp_path, synthetic_raw):
-    _, _, out = trained
-    source = tmp_path / "new.csv"
-    synthetic_raw.drop(columns=["Churn"]).head(20).to_csv(source, index=False)
-    output = tmp_path / "pred.csv"
+def run_cli(*args) -> str:
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    done = subprocess.run([sys.executable, *map(str, args)], cwd=ROOT, check=True, capture_output=True,
+                          text=True, encoding="utf-8", env=env)
+    return done.stdout
+
+
+def test_user_scenario_cli(tmp_path):
+    """Сценарий пользователя только через команды: данные → обучение → прогноз CSV → бюджет."""
+    data = tmp_path / "telco.csv"
+    run_cli("-m", "churn.synthetic", "--output", data)
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(smoke_config(tmp_path, data), ensure_ascii=False), encoding="utf-8")
+    run_cli("train.py", "--config", config_path)
+
+    # новые клиенты: другой seed, без целевого столбца
+    run_cli("-m", "churn.synthetic", "--output", tmp_path / "new_raw.csv", "--rows", 200, "--seed", 1)
+    new = pd.read_csv(tmp_path / "new_raw.csv", dtype={"TotalCharges": "object"}).drop(columns=["Churn"])
+    new.to_csv(tmp_path / "new.csv", index=False)
+
     with warnings.catch_warnings():
-        subprocess.run(
-            [sys.executable, "predict.py", "--model", str(out / "model.joblib"),
-             "--input", str(source), "--output", str(output)],
-            cwd=ROOT, check=True, capture_output=True,
-        )
-    pred = pd.read_csv(output)
+        warnings.simplefilter("error")  # артефакт обучен в этом же окружении — расхождения версий быть не должно
+        model = ChurnModel.load(tmp_path / "model.joblib")
+    proba = model.predict_proba(new)
+    above = proba >= model.threshold
+    assert above.sum() >= 2
+
+    run_cli("predict.py", "--model", tmp_path / "model.joblib", "--input", tmp_path / "new.csv",
+            "--output", tmp_path / "pred.csv")
+    pred = pd.read_csv(tmp_path / "pred.csv")
     assert list(pred.columns) == ["customerID", "churn_probability", "in_retention_list"]
-    assert pred["customerID"].tolist() == synthetic_raw["customerID"].head(20).tolist()
-    assert pred["churn_probability"].between(0, 1).all()
+    assert pred["customerID"].tolist() == new["customerID"].tolist()
+    np.testing.assert_allclose(pred["churn_probability"], proba, atol=1e-6)
+    np.testing.assert_array_equal(pred["in_retention_list"], above.astype(int))
+
+    budget = int(above.sum()) // 2
+    stdout = run_cli("predict.py", "--model", tmp_path / "model.joblib", "--input", tmp_path / "new.csv",
+                     "--output", tmp_path / "pred_budget.csv", "--budget", budget)
+    assert f"бюджет {budget}" in stdout
+    chosen = pd.read_csv(tmp_path / "pred_budget.csv")["in_retention_list"].to_numpy().astype(bool)
+    assert chosen.sum() == budget
+    assert (proba[chosen] >= model.threshold).all()
+    assert proba[chosen].min() >= proba[above & ~chosen].max()  # взяты лучшие по оценке
+
+
+def test_select_for_retention_respects_threshold_and_budget():
+    proba = np.array([0.9, 0.2, 0.5, 0.5, 0.7])
+    np.testing.assert_array_equal(select_for_retention(proba, 0.5), [1, 0, 1, 1, 1])
+    np.testing.assert_array_equal(select_for_retention(proba, 0.5, budget=10), [1, 0, 1, 1, 1])
+    np.testing.assert_array_equal(select_for_retention(proba, 0.5, budget=3), [1, 0, 1, 0, 1])  # равные — по порядку
+    np.testing.assert_array_equal(select_for_retention(proba, 0.5, budget=0), [0, 0, 0, 0, 0])
+    with pytest.raises(ValueError):
+        select_for_retention(proba, 0.5, budget=-1)
 
 
 def test_prepare_features_matches_training_cleaning(synthetic_raw):

@@ -80,15 +80,21 @@ python predict.py --input examples/new_customers.csv --output predictions.csv
 `train.py` без флага test не трогает. Каждое `--evaluate-test` добавляет запись в
 `results/test_access_log.json`, а при повторном обращении выводит предупреждение.
 `predict.py` пишет `customerID`, `churn_probability` и `in_retention_list`: 1, если клиент
-выше порога точки работы.
+выше порога точки работы. Порог выбран на train и не гарантирует, что на новой выборке список
+уложится в бюджет. С `--budget K` в список попадают не больше K клиентов с наибольшей оценкой
+среди тех, кто выше порога. Без `--budget` программа предупреждает, если доля выше порога
+больше бюджета из конфигурации обучения.
 
 Тесты и smoke-прогон работают без сети на синтетическом наборе той же схемы:
 
 ```bash
 python -m churn.synthetic           # data/synthetic/telco_synthetic.csv
 python train.py --config configs/smoke.json --evaluate-test   # ~6 с
-pytest                              # 4 теста из 76 требуют скачанных данных и без них пропускаются
+pytest                              # 4 теста из 77 требуют скачанных данных и без них пропускаются
 ruff check .
 ```
 
-CI (`.github/workflows/ci.yml`) прогоняет то же на ubuntu и windows.
+CI (`.github/workflows/ci.yml`) прогоняет то же на ubuntu и windows, а затем `predict.py` на
+`examples/new_customers.csv` с сохранённой smoke-моделью. Тест `test_user_scenario_cli` проходит
+сценарий пользователя только через команды: синтетические данные → `train.py` → загрузка
+артефакта → `predict.py` на новых клиентах → проверка порога и бюджета.
